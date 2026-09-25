@@ -110,6 +110,25 @@ Website/
 - `client/.env`: `VITE_API_BASE_URL` (points at the Express API; client never touches Supabase
   keys directly)
 
+## Deployment (Vercel, single project)
+- `api/[...path].mjs` is a catch-all Vercel serverless function that hands every `/api/*`
+  request straight to the existing Express app (`server/src/index.js`, which now `export default
+  app` and only calls `app.listen()` when `process.env.VERCEL` is unset). Every server route was
+  already mounted under `/api/...`, matching the path Vercel passes through, so no route code
+  changed.
+- Root `vercel.json` builds the client (`npm run build --prefix client`) with output directory
+  `client/dist`, and rewrites any non-`/api` path to `index.html` so React Router's client-side
+  routes work on refresh/direct link.
+- The client already defaults `VITE_API_BASE_URL` to `/api` when the env var isn't set
+  (`client/src/lib/api.js`) — since client and API are served from the same Vercel domain in this
+  setup, leave that env var unset in Vercel so requests stay same-origin (no CORS needed).
+- **Required Vercel Environment Variables** (Project Settings → Environment Variables):
+  `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_TOKEN` — the same values as
+  `server/.env`, which is git-ignored and never uploaded. Do **not** set `VITE_API_BASE_URL`.
+- Verified locally end-to-end: built `api/[...path].mjs` with `VERCEL=1` set and the real
+  Supabase env vars, pointed a plain Node http server at it, and confirmed `/api/health` and
+  `/api/bio-polaroids` both routed correctly through the Express app.
+
 ## Build Order
 1. Scaffold root + client (Vite/React/Tailwind) + server (Express), env files, `npm run dev`.
 2. Supabase schema + seed script.

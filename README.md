@@ -39,3 +39,22 @@ where `ADMIN_TOKEN` is set in `server/.env`. Resources: `bio-polaroids`, `achiev
 Replace the emoji placeholder "doodles" on the landing page
 ([`client/src/pages/Landing.jsx`](./client/src/pages/Landing.jsx)) with real hand-drawn SVG/PNG
 assets whenever those are ready — the drag/click interaction already works with any image src.
+
+## Deploying to Vercel
+
+This repo deploys as a single Vercel project: the client builds to static files, and the Express
+API runs as one serverless function (`api/[...path].mjs`) — see `vercel.json` and the
+"Deployment" section of [`CLAUDE.md`](./CLAUDE.md) for how that's wired.
+
+1. Push this repo to GitHub (if it isn't already) and import it in the Vercel dashboard
+   ("Add New... → Project"). Vercel will read `vercel.json` automatically — no framework preset
+   or root directory override needed.
+2. In the new project's **Settings → Environment Variables**, add:
+   - `SUPABASE_URL` — `https://crayzxjscbcivxrmezdb.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY` — the value from `server/.env`
+   - `ADMIN_TOKEN` — the value from `server/.env`
+   Leave `VITE_API_BASE_URL` unset (it defaults to `/api`, same-origin with the deployed site).
+3. Deploy. Once it's live, run `server/schema.sql` (and optionally `seed.sql`) in the Supabase SQL
+   editor if you haven't already — same one-time step as local dev.
+4. Every push to the connected branch redeploys automatically; `vercel --prod` from the CLI works
+   too if you'd rather deploy manually.

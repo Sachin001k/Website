@@ -29,5 +29,11 @@ app.get('/api/thoughts/latest/current', async (req, res) => {
   res.json(data);
 });
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => console.log(`Tvisha website API listening on http://localhost:${port}`));
+// Vercel imports this file as a serverless function (see /api/[...path].mjs) instead of
+// running it directly, so only bind a real port when running locally / on a normal Node host.
+if (!process.env.VERCEL) {
+  const port = process.env.PORT || 4000;
+  app.listen(port, () => console.log(`Tvisha website API listening on http://localhost:${port}`));
+}
+
+export default app;
