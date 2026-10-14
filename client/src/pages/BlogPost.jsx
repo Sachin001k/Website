@@ -1,23 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
-import 'katex/dist/katex.min.css';
+import Markdown from '../components/Markdown';
 import { useApiData } from '../hooks/useApiData';
 import { api } from '../lib/api';
-
-// Markdown images use the title slot for a caption: ![alt text](url "caption").
-// Alt text is required for accessibility and is always rendered as-is on the <img>.
-function MarkdownImage({ src, alt, title }) {
-  return (
-    <figure className="my-6">
-      <img src={src} alt={alt || ''} className="doodle-shadow w-full rounded-xl border-2 border-ink" />
-      {title && (
-        <figcaption className="mt-2 text-center font-label text-sm text-ink/60">{title}</figcaption>
-      )}
-    </figure>
-  );
-}
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -30,7 +14,7 @@ export default function BlogPost() {
       <div className="px-6 py-16 text-center">
         <p className="font-label text-xl">couldn't find that post.</p>
         <Link to="/blog" className="wobble-hover mt-4 inline-block font-label underline">
-          back to the blog
+          back to The Metrics of Motion
         </Link>
       </div>
     );
@@ -39,7 +23,7 @@ export default function BlogPost() {
   return (
     <article className="mx-auto max-w-2xl px-6 py-16">
       <Link to="/blog" className="wobble-hover font-label text-sm">
-        ← back to the blog
+        ← back to The Metrics of Motion
       </Link>
 
       {post.cover_image_url && (
@@ -55,14 +39,8 @@ export default function BlogPost() {
         {new Date(post.published_at).toLocaleDateString()}
       </p>
 
-      <div className="prose prose-lg mt-8 max-w-none font-body prose-headings:font-hand">
-        <ReactMarkdown
-          remarkPlugins={[remarkMath]}
-          rehypePlugins={[rehypeKatex]}
-          components={{ img: MarkdownImage }}
-        >
-          {post.content_md}
-        </ReactMarkdown>
+      <div className="mt-8">
+        <Markdown className="prose prose-lg">{post.content_md}</Markdown>
       </div>
     </article>
   );

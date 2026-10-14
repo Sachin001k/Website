@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApiData } from '../hooks/useApiData';
 import { api } from '../lib/api';
+import { useSettings } from '../hooks/useSettings';
 
 export default function ThoughtOfDayWidget() {
   const [open, setOpen] = useState(true);
   const { data: thought } = useApiData(() => api.getLatestThought(), []);
+  const settings = useSettings();
 
   if (!thought) return null;
 
@@ -26,7 +28,7 @@ export default function ThoughtOfDayWidget() {
             >
               ×
             </button>
-            <p className="text-sm uppercase tracking-wide opacity-70">thought of the week</p>
+            <p className="text-sm uppercase tracking-wide opacity-70">{settings.thought_label || 'thought of the week'}</p>
             <p className="mt-1 text-lg leading-snug">{thought.body}</p>
           </motion.div>
         )}

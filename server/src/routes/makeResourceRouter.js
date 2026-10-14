@@ -5,15 +5,15 @@ import { requireAdmin } from '../middleware/requireAdmin.js';
 /**
  * Builds a standard read-public / write-admin REST router over one Supabase table.
  * `slugColumn` lets a resource also be fetched by a human-readable slug (e.g. blog posts).
+ * `thenBy` is an optional secondary sort column (always ascending).
  */
-export function makeResourceRouter({ table, orderBy = 'sort_order', ascending = true, slugColumn }) {
+export function makeResourceRouter({ table, orderBy = 'sort_order', ascending = true, thenBy, slugColumn }) {
   const router = Router();
 
   router.get('/', async (req, res) => {
-    const { data, error } = await supabase
-      .from(table)
-      .select('*')
-      .order(orderBy, { ascending });
+    let query = supabase.from(table).select('*').order(orderBy, { ascending });
+    if (thenBy) query = query.order(thenBy, { ascending: true });
+    const { data, error } = await query;
 
     if (error) return res.status(500).json({ error: error.message });
     res.json(data);

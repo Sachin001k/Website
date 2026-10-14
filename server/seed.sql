@@ -1,29 +1,39 @@
--- Placeholder content so pages aren't empty during development.
--- Replace/delete these rows once real content is entered.
+-- Starter content so pages aren't empty. Everything here is editable from /admin —
+-- replace the placeholder sentences/achievements/books with Tvisha's real text.
 
 insert into thoughts (body, week_of) values
   ('Progress > perfection. Ship the scrappy version first.', current_date);
 
-insert into bio_polaroids (image_url, sentence, sort_order) values
-  ('/placeholders/polaroid-1.jpg', 'Hi, I''m Tvisha — this is my corner of the internet.', 1),
-  ('/placeholders/polaroid-2.jpg', 'I skate, I build, and I love a good physics problem.', 2),
-  ('/placeholders/polaroid-3.jpg', 'Currently obsessed with making the internet feel personal again.', 3);
+insert into bio_polaroids (label, doodle, image_url, image_credit, sentence, sort_order) values
+  ('speed skating', 'skate', null, null, 'I race on inline speed skates (not a skateboard!) — and I like measuring exactly how fast.', 1),
+  ('maths', 'maths', '/doodles/maths.svg', null, 'Give me a blackboard full of equations and I''m happy for hours.', 2),
+  ('reading', 'reading', null, null, 'There''s always a book in my bag.', 3),
+  ('linguistics', 'linguistics', '/photos/linguistics.webp', 'Photo: Churchill College, University of Cambridge', 'I''m fascinated by how languages work under the hood.', 4),
+  ('travel', 'travel', null, null, 'I collect places — every trip is a new page in the scrapbook.', 5);
 
-insert into achievements (title, description, tier, category, unlocked_at, sort_order) values
-  ('First Kickflip', 'Landed my first kickflip after weeks of bruises.', 'bronze', 'skating', current_date, 1),
-  ('Math Olympiad Qualifier', 'Qualified for the regional math olympiad.', 'silver', 'math', current_date, 2),
-  ('Launched Skate Forward', 'Shipped the first Skate Forward physics kit.', 'gold', 'general', current_date, 3);
+insert into achievements (year, title, description, category, sort_order) values
+  (2026, 'Placeholder achievement', 'Replace me from /admin with the real text.', 'general', 1);
 
 insert into books (title, author, description, rating, date_read) values
   ('The Feynman Lectures on Physics', 'Richard Feynman', 'The book that made physics feel like play instead of homework.', 5, current_date);
 
-insert into skate_forward_kits (name, description, purpose, video_url, sort_order) values
-  ('Kit 1: Rolling Motion', 'A build that turns a skateboard into a rolling-motion physics demo.', 'Teaches velocity, acceleration, and friction hands-on.', 'https://youtube.com/@your-channel', 1),
-  ('Kit 2: Ramps & Energy', 'A modular ramp kit for exploring potential vs. kinetic energy.', 'Teaches energy conservation through real skate tricks.', 'https://youtube.com/@your-channel', 2);
+insert into reup_kits (name, description, purpose, video_url, sort_order) values
+  ('Kit 1 (placeholder)', 'Describe the kit, what''s in the box and how it''s built.', 'What physics concept it teaches and why it matters.', null, 1),
+  ('Kit 2 (placeholder)', 'Describe the kit, what''s in the box and how it''s built.', 'What physics concept it teaches and why it matters.', null, 2);
 
-insert into blog_posts (slug, title, content_md, tags) values (
+insert into blog_posts (slug, title, summary, content_md, tags) values (
   'hello-world',
   'Hello, World!',
-  '# Hello, World!\n\nThis is the first post on my scrapbook of a website. More soon — including some math, like $E = mc^2$.',
+  'Why I''m using physics to pick apart speed skating.',
+  E'# Hello, World!\n\nThis blog is about using physics to analyse speed skating — like $F = ma$ on eight wheels.',
   array['intro']
 );
+
+insert into site_settings (key, value) values
+  ('thought_label', 'thought of the week'),
+  ('medium_url', 'https://medium.com/@cece_11925'),
+  ('reup_intro', 'An introduction to ReUP is coming soon — edit this from /admin.'),
+  ('reup_youtube_url', ''),
+  ('travel_hero_image', ''),
+  ('travel_intro', 'Places I''ve been, pinned to the page.')
+on conflict (key) do nothing;

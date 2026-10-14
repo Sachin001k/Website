@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import SmoothScroll from './components/SmoothScroll';
 import Navbar from './components/Navbar';
@@ -12,7 +12,9 @@ import Achievements from './pages/Achievements';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Books from './pages/Books';
-import SkateForward from './pages/SkateForward';
+import Reup from './pages/Reup';
+import Travel from './pages/Travel';
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 
 const slideVariants = {
@@ -43,6 +45,9 @@ function useTransitionDirection(pathname) {
 function AnimatedRoutes({ onDragEnd }) {
   const location = useLocation();
   const direction = useTransitionDirection(location.pathname);
+  // Only the swipeable top-level pages get the page-flip drag; on /admin or a blog post it
+  // would fight text selection for no benefit.
+  const swipeable = PAGE_ORDER.includes(location.pathname);
 
   return (
     <AnimatePresence mode="wait" initial={false} custom={direction}>
@@ -54,7 +59,7 @@ function AnimatedRoutes({ onDragEnd }) {
         animate="center"
         exit="exit"
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        drag="x"
+        drag={swipeable ? 'x' : false}
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.7}
         dragMomentum={false}
@@ -63,11 +68,17 @@ function AnimatedRoutes({ onDragEnd }) {
       >
         <Routes location={location}>
           <Route path="/" element={<Landing />} />
-          <Route path="/achievements" element={<Achievements />} />
+          <Route path="/what-im-good-at" element={<Achievements />} />
+          <Route path="/travel" element={<Travel />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/books" element={<Books />} />
-          <Route path="/skate-forward" element={<SkateForward />} />
+          <Route path="/reading" element={<Books />} />
+          <Route path="/reup" element={<Reup />} />
+          <Route path="/admin" element={<Admin />} />
+          {/* old URLs */}
+          <Route path="/achievements" element={<Navigate to="/what-im-good-at" replace />} />
+          <Route path="/books" element={<Navigate to="/reading" replace />} />
+          <Route path="/skate-forward" element={<Navigate to="/reup" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
@@ -77,6 +88,7 @@ function AnimatedRoutes({ onDragEnd }) {
 
 export default function App() {
   const { hasPrev, hasNext, goPrev, goNext, handleDragEnd } = useSwipeNavigate();
+  const { pathname } = useLocation();
 
   return (
     <SmoothScroll>
@@ -85,7 +97,8 @@ export default function App() {
         <AnimatedRoutes onDragEnd={handleDragEnd} />
       </main>
       <SwipeArrows hasPrev={hasPrev} hasNext={hasNext} goPrev={goPrev} goNext={goNext} />
-      <ThoughtOfDayWidget />
+      {/* lives here rather than inside Landing: the page wrapper's transform would break `position: fixed` */}
+      {pathname === '/' && <ThoughtOfDayWidget />}
     </SmoothScroll>
   );
 }

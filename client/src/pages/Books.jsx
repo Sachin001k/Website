@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
 import { useApiData } from '../hooks/useApiData';
 import { api } from '../lib/api';
+import PageHeader from '../components/PageHeader';
 
 function Stars({ rating = 0 }) {
   const full = Math.round(rating);
   return (
-    <span className="text-sunshine" aria-label={`${rating} out of 5 stars`}>
+    <span className="text-purple" aria-label={`${rating} out of 5 stars`}>
       {'★'.repeat(full)}
       <span className="text-ink/20">{'★'.repeat(Math.max(0, 5 - full))}</span>
     </span>
@@ -17,12 +18,7 @@ export default function Books() {
 
   return (
     <section className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="text-center font-hand text-5xl font-bold gradient-text md:text-6xl">
-        the bookshelf
-      </h1>
-      <p className="mt-3 text-center font-label text-lg text-ink/70">
-        everything I've read and loved, pinned up like a corkboard.
-      </p>
+      <PageHeader title="Reading" subtitle="all the books I’ve read and loved, pinned up like polaroids." />
 
       {loading && <p className="mt-10 text-center font-label">stacking books...</p>}
 
@@ -34,11 +30,11 @@ export default function Books() {
             whileInView={{ opacity: 1, y: 0, rotate: (i % 2 === 0 ? -1 : 1) * (2 + (i % 3)) }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.4, delay: i * 0.04 }}
-            className="wobble-hover doodle-shadow bg-white p-3 pb-5"
+            className="wobble-hover doodle-shadow relative bg-white p-3 pb-5"
           >
-            <div className="flex h-40 items-center justify-center overflow-hidden bg-paper-dark">
+            <div className="flex aspect-[2/3] items-center justify-center overflow-hidden bg-paper-dark">
               {book.cover_image_url ? (
-                <img src={book.cover_image_url} alt={book.title} className="h-full w-full object-cover" />
+                <img src={book.cover_image_url} alt={`Cover of ${book.title}`} className="h-full w-full object-cover" />
               ) : (
                 <span className="text-3xl">📖</span>
               )}

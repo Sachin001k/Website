@@ -2,11 +2,9 @@
 
 ## Vibe / Direction
 A portfolio that reads like a **scrapbook / comic**, not a corporate site — closest reference is
-[ncase.me/trust](https://ncase.me/trust/): hand-drawn doodles, playful motion, everything feels
-touchable. Inspiration for "time flies" color psychology: the warm, saturated,
-slightly-oversaturated gradient palette that Instagram Reels / TikTok use (hot pink → purple →
-orange), because those hues read as energetic and rewarding rather than "professional/corporate
-blue," which is exactly why we want it here.
+[ncase.me/trust](https://ncase.me/trust/): hand-drawn doodles, word-bubble text, playful motion,
+everything feels touchable. Signature colour is a **light blue → light purple** gradient (Tvisha's
+brief, Oct 2026 — replaced the earlier hot-pink/orange "reels" palette).
 
 ## Tech Stack
 - **Frontend**: React 18 + Vite (JS, not TS — keep iteration fast), React Router, Tailwind CSS,
@@ -32,22 +30,21 @@ Website/
 
 ## Design System
 - **Colors** (`client/src/index.css` custom properties):
-  - `--paper: #FFF8EF` (scrapbook page background, warm off-white, subtle grain texture)
-  - `--ink: #1F1533` (near-black plum for doodle linework / body text)
-  - `--hot-pink: #FF2E7E`
-  - `--violet: #8C4DFF`
-  - `--tangerine: #FF9430`
-  - `--sunshine: #FFD23F`
-  - `--sky: #3EC6FF`
-  - Primary CTAs and highlights use a pink → violet → tangerine gradient (the "reels" gradient).
+  - `--paper: #FBFAFF`, `--paper-dark: #ECE8FB`, `--ink: #1F1533` (doodle linework / body text)
+  - `--baby-blue: #B8E2FF`, `--lilac: #D9C9FF` — pale pair for fills/backgrounds (`.gradient-bg`)
+  - `--blue: #4FA8EC`, `--purple: #9A78F0` — deeper pair for `.gradient-text` so headings stay legible
+  - `--sunshine: #FFE27A` — sticky-note yellow only
+  - Page background is a fixed light-blue → lilac wash with a dot grain.
+  - Reusable bits: `.speech-bubble` (comic word bubble, used for page subtitles), `.tape` (washi tape).
 - **Type**: `Caveat` / `Kalam` (handwritten, for headings + word-bubble text), `Patrick Hand` for
   UI labels, `Comic Neue` for long-form body copy (blog posts) — all via Google Fonts.
-- **Cursor**: the normal system cursor — a custom cursor was tried and reverted because the
-  visual lag made dragging the landing-page doodles feel imprecise; usability won over novelty.
+- **Cursor**: doodle arrow via CSS `cursor: url(/cursors/*.svg)` (`client/public/cursors/`). It's a
+  native cursor image, not a JS-followed element — an earlier JS cursor was reverted because its lag
+  made dragging the doodles feel imprecise, so never reintroduce a JS-driven cursor.
 - **Motion**: Lenis drives smooth/eased page scroll everywhere; Framer Motion drives doodle drag
   physics, hover wiggles, and page-transition/reveal animation. Nothing should feel like a static
   webpage — panels drift in, doodles wobble on hover, buttons squash slightly on click.
-- **Page-to-page navigation**: the five top-level pages (`client/src/pageOrder.js`) form a
+- **Page-to-page navigation**: the six top-level pages (`client/src/pageOrder.js`) form a
   sequence you can move through by swiping left/right — a real `drag="x"` with elastic
   live-follow-the-finger feedback and a rubber-band snap back at the first/last page, like
   switching Home Screens on iOS — plus left/right arrow keys, hover-only edge arrows
@@ -61,49 +58,56 @@ Website/
   reused across pages for the scrapbook feel.
 
 ## Pages & Features
+Source brief: Google Doc "Tvisha Website - Portfolio Website" (tabs: Overall features, Text for
+bubbles, Achievements, Book reviews, ReUP Project, Travel details). Swipe order / nav lives in
+`client/src/pageOrder.js`. Old URLs `/achievements`, `/books`, `/skate-forward` redirect.
 
-### 1. Landing Page (`/`)
-- Full-bleed draggable collage of doodles/stickers (Framer Motion `drag`) scattered across a
-  corkboard/scrapbook background — strings connecting some of them like the trust-game intro.
-- Clicking (not dragging) a doodle opens a **polaroid modal**: a photo + one bio sentence,
-  building up Tvisha's personality bit by bit as you click around. Data comes from the
-  `bio_polaroids` table.
-- Smooth inertia scroll transitions between the collage hero and lower sections (nav teasers into
-  Achievements / Blog / Books / Skate Forward).
-- Small persistent **"Thought of the day/week"** box pinned bottom-corner, pulling from the
-  `thoughts` table, styled like a sticky note.
+### 1. What I Love — landing (`/`)
+- "Hi, I'm Tvisha" + bubble subtitle "drag the stickers around, or click one to learn a little
+  about me :)". Draggable doodle bubbles from `bio_polaroids` (built-in SVG doodles in
+  `components/Doodle.jsx`: skate = **inline speed skating, not skateboarding**, maths = blackboard,
+  reading, linguistics, travel). Click → polaroid modal (photo + credit + bio sentence).
+- Linguistics photo is from chu.cam.ac.uk (`public/photos/linguistics.webp`) — always show the
+  credit "Photo: Churchill College, University of Cambridge".
+- Thought of the day/week sticky note — landing only (rendered in `App.jsx`, since the page
+  wrapper's transform would break `position: fixed`); heading text is a site setting.
 
-### 2. Achievements Page (`/achievements`)
-- Video-game style progression: tiers/levels (e.g. Bronze → Silver → Gold → Legendary) rendered
-  as a level path/map (like a Candy-Crush level map) users scroll up through.
-- Each node = one achievement (title, description, icon, date, category) from the `achievements`
-  table; locked nodes for future/aspirational goals are greyed out.
-- Stretch: a simple customizable avatar strip (skating uniform / doing-math / etc. costume swap)
-  using layered SVGs, driven by `achievement.category`.
+### 2. What I'm Good At (`/what-im-good-at`)
+- Scrollable vertical timeline grouped by `achievements.year` (newest first), alternating sides on
+  desktop.
 
-### 3. Blog (`/blog`, `/blog/:slug`)
-- Same scrapbook visual language, comic-style display font for headings, Comic Neue for body.
-- Posts stored as Markdown (with LaTeX via `$...$` / `$$...$$`, rendered through
-  `remark-math` + KaTeX) in the `blog_posts` table; supports images with caption + required
-  alt text.
+### 3. Travel (`/travel`)
+- Big taped photo (`travel_hero_image` setting) + polaroid grid of `travel_places` (flag emoji or
+  monument photo).
 
-### 4. Books (`/books`)
-- Grid of polaroid-style cards (cover photo, title, author, short description, rating) pulled
-  from the `books` table — looks like a shelf of stuck-up photos rather than a plain list.
+### 4. The Metrics of Motion — blog (`/blog`, `/blog/:slug`)
+- Physics of speed skating. Markdown + LaTeX + captioned images (`components/Markdown.jsx`).
+  A post with `external_url` links straight out to Medium. Medium profile button from settings.
 
-### 5. Skate Forward Project (`/skate-forward`)
-- Introduction/mission blurb for the initiative.
-- The plan: 2–3 physics kits, each with a dedicated section explaining the concept it teaches and
-  its purpose, pulled from the `skate_forward_kits` table.
-- Embedded links out to the YouTube channel for build/upload videos.
+### 5. Reading (`/reading`)
+- Polaroid grid of `books` (cover, title, author, rating, description).
+
+### 6. ReUP (`/reup`)
+- Intro (Markdown, `reup_intro` setting) + YouTube channel link, then kit sections from
+  `reup_kits` (description + purpose in Markdown, optional photo and video link).
+
+### Admin (`/admin`, unlisted)
+- Password = `ADMIN_TOKEN`; stored in localStorage and verified via `GET /api/admin/check`.
+- Generic editor driven by `client/src/admin/adminConfig.js` (one entry per table + the
+  `site_settings` fields). Image fields upload through `POST /api/upload` → Supabase Storage
+  bucket `media` (auto-created); the browser downsizes photos to ≤1800px first to stay under
+  Vercel's ~4.5 MB body cap.
 
 ## Data Model (Supabase — see `server/schema.sql`)
-- `bio_polaroids(id, image_url, sentence, sort_order)`
+- `bio_polaroids(id, label, doodle, image_url, image_credit, sentence, sort_order)`
 - `thoughts(id, body, week_of)`
-- `achievements(id, title, description, tier, category, icon_url, unlocked_at, sort_order)`
-- `blog_posts(id, slug, title, cover_image_url, content_md, tags, published_at)`
+- `achievements(id, year, title, description, category, icon_url, sort_order)`
+- `blog_posts(id, slug, title, summary, cover_image_url, content_md, external_url, tags, published_at)`
 - `books(id, title, author, cover_image_url, description, rating, date_read)`
-- `skate_forward_kits(id, name, description, purpose, video_url, sort_order)`
+- `reup_kits(id, name, image_url, description, purpose, video_url, sort_order)`
+- `travel_places(id, name, country, flag, image_url, note, year, sort_order)`
+- `site_settings(key, value)` — keys: `thought_label`, `travel_hero_image`, `travel_intro`,
+  `medium_url`, `reup_intro`, `reup_youtube_url`
 
 ## Env Vars
 - `server/.env`: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_TOKEN`, `PORT`
@@ -144,13 +148,16 @@ Website/
 - [x] Plan written
 - [x] Scaffold (client/server/env/dev script) — `npm run dev` boots both, verified end-to-end
 - [x] Supabase schema written (`server/schema.sql`, `server/seed.sql`) — **not yet run** against
-      the live project; run it in the Supabase SQL editor before the API returns real data
+      the live project (checked Oct 2026: no tables exist); run both in the Supabase SQL editor
 - [x] Global shell (fonts, cursor, scroll, nav)
 - [x] Landing page (draggable doodle collage, polaroid bio modal, teaser cards)
 - [x] Blog (list + post, Markdown + LaTeX + captioned images)
 - [x] Books (polaroid-style grid)
 - [x] Skate Forward (intro, kit list, YouTube links)
 - [x] Achievements (level-map layout with tiers)
-- [ ] Landing doodles are emoji placeholders — swap for real hand-drawn art
+- [x] Oct 2026 brief: renamed pages, light blue → purple palette, doodle cursor, word bubbles,
+      year timeline, Travel page, ReUP page, Medium link, /admin editor with image upload
+- [ ] Doodles are simple SVG stand-ins — swap for real hand-drawn art if Tvisha draws some
+- [ ] Photos "in drive" (skating, reading, travel, travel hero) — not shared yet; upload via /admin
 - [ ] Real content pass (bio polaroids, achievements, books, posts, kits) once Tvisha supplies it
 - [ ] Responsive polish pass on small screens

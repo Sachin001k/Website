@@ -34,7 +34,7 @@ browser.
 For now, content is added directly in Supabase (Table Editor) or via the API's admin routes:
 `POST/PUT/DELETE` on `/api/<resource>` require an `Authorization: Bearer <ADMIN_TOKEN>` header,
 where `ADMIN_TOKEN` is set in `server/.env`. Resources: `bio-polaroids`, `achievements`, `books`,
-`blog` (has a `slug`), `skate-forward`, `thoughts`.
+`blog` (has a `slug`), `reup-kits`, `travel-places`, `thoughts`; plus `PUT /api/settings` and `POST /api/upload`. Easiest: use the `/admin` page.
 
 Replace the emoji placeholder "doodles" on the landing page
 ([`client/src/pages/Landing.jsx`](./client/src/pages/Landing.jsx)) with real hand-drawn SVG/PNG
